@@ -52,13 +52,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuctionContext.cs" />
-    <Compile Include="Migrations\202111160447283_auctionEntityAdded.cs" />
-    <Compile Include="Migrations\202111160447283_auctionEntityAdded.designer.cs">
-      <DependentUpon>202111160447283_auctionEntityAdded.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202111160453267_auctions_EndingTime.cs" />
-    <Compile Include="Migrations\202111160453267_auctions_EndingTime.designer.cs">
-      <DependentUpon>202111160453267_auctions_EndingTime.cs</DependentUpon>
+    <Compile Include="Migrations\202111190424313_addedCategories.cs" />
+    <Compile Include="Migrations\202111190424313_addedCategories.designer.cs">
+      <DependentUpon>202111190424313_addedCategories.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -74,11 +70,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202111160447283_auctionEntityAdded.resx">
-      <DependentUpon>202111160447283_auctionEntityAdded.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202111160453267_auctions_EndingTime.resx">
-      <DependentUpon>202111160453267_auctions_EndingTime.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202111190424313_addedCategories.resx">
+      <DependentUpon>202111190424313_addedCategories.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

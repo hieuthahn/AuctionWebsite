@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Auction.Services;
+using Auction.Web.ViewsModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,9 +10,19 @@ namespace Auction.Web.Controllers
 {
     public class HomeController : Controller
     {
+        AuctionsService service = new AuctionsService();
         public ActionResult Index()
         {
-            return View();
+            AuctionsViewModels vModel = new AuctionsViewModels();
+
+            vModel.PageTitle = "Đấu giá trực tuyến";
+            vModel.PageDescription = "This is HomePage";
+
+            vModel.AllAuctions = service.GetAllAuctions();
+            vModel.PromotedAuctions = service.GetPromotedAuctions();
+           
+
+            return View(vModel);
         }
 
         public ActionResult About()
