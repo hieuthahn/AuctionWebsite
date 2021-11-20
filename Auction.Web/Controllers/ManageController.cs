@@ -7,30 +7,31 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Auction.Web.Models;
+using Auction.Services;
 
 namespace Auction.Web.Controllers
 {
     [Authorize]
     public class ManageController : Controller
     {
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
+        private AuctionSignInManager _signInManager;
+        private AuctionUserManager _userManager;
 
         public ManageController()
         {
         }
 
-        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        public ManageController(AuctionUserManager userManager, AuctionSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
         }
 
-        public ApplicationSignInManager SignInManager
+        public AuctionSignInManager SignInManager
         {
             get
             {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+                return _signInManager ?? HttpContext.GetOwinContext().Get<AuctionSignInManager>();
             }
             private set 
             { 
@@ -38,11 +39,11 @@ namespace Auction.Web.Controllers
             }
         }
 
-        public ApplicationUserManager UserManager
+        public AuctionUserManager UserManager
         {
             get
             {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<AuctionUserManager>();
             }
             private set
             {

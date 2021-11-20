@@ -5,10 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Auction.Entities;
+using Microsoft.AspNet.Identity.EntityFramework;
+
+
 
 namespace Auction.Data
 {
-    public class AuctionContext : DbContext
+    public class AuctionContext : IdentityDbContext<Auction.Entities.AuctionUser>
     {
         public AuctionContext() : base("name=AuctionConnectionString")
         {
@@ -18,5 +21,13 @@ namespace Auction.Data
         public DbSet<Auction.Entities.Auction> Auctions { get; set; }
         public DbSet<Auction.Entities.Picture> Pictures { get; set; }
         public DbSet<Auction.Entities.AuctionPicture> AuctionPictures { get; set; }
+        public DbSet<Auction.Entities.Bid> Bids { get; set; }
+        public DbSet<Auction.Entities.Comment> Comments { get; set; }
+
+
+        public static AuctionContext Create()
+        {
+            return new AuctionContext();
+        }
     }
 }

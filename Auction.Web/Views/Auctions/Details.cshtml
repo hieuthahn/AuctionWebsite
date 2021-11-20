@@ -1,5 +1,8 @@
 ﻿@model Auction.Web.ViewsModels.AuctionsDetailsViewModels
 
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <div class="row">
 
     <div class="col-md-12">
@@ -11,52 +14,62 @@
                 var i = 0;
                 <div class="row carousel-holder">
 
-                <div class="col-md-12">
-                    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-                        <ol class="carousel-indicators">
-                            @foreach (var picture in Model.Auction.AuctionPictures)
-                            {
+                    <div class="col-md-12">
+                        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                            <ol class="carousel-indicators">
+                                @foreach (var picture in Model.Auction.AuctionPictures)
+                                {
 
-                                var active = picture == firstAuctionPicture ? "active" : string.Empty;
+                                    var active = picture == firstAuctionPicture ? "active" : string.Empty;
 
-                                <li class="@active" data-target="#carouselIndicators" data-slide-to="@i"></li>
+                                    <li class="@active" data-target="#carouselIndicators" data-slide-to="@i"></li>
 
-                                i++;
-                            }
+                                    i++;
+                                }
 
-                        </ol>
-                        <div class="carousel-inner">
-                            @foreach (var auctionPicture in Model.Auction.AuctionPictures)
-                            {
-                                var active = auctionPicture == firstAuctionPicture ? "active" : string.Empty;
+                            </ol>
+                            <div class="carousel-inner">
+                                @foreach (var auctionPicture in Model.Auction.AuctionPictures)
+                                {
+                                    var active = auctionPicture == firstAuctionPicture ? "active" : string.Empty;
 
-                                var picURL = "/Content/images/" + auctionPicture.Picture.URL;
+                                    var picURL = "/Content/images/" + auctionPicture.Picture.URL;
 
-                                <div class="item @active" >
-                                    <img class="slide-image" src="@picURL" alt="">
-                                </div>
-                            }
-                            
+                                    <div class="item @active">
+                                        <img class="slide-image" src="@picURL" alt="">
+                                    </div>
+                                }
+
+                            </div>
+                            <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+                                <span class="glyphicon glyphicon-chevron-left"></span>
+                            </a>
+                            <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+                                <span class="glyphicon glyphicon-chevron-right"></span>
+                            </a>
                         </div>
-                        <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
-                            <span class="glyphicon glyphicon-chevron-left"></span>
-                        </a>
-                        <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
-                            <span class="glyphicon glyphicon-chevron-right"></span>
-                        </a>
                     </div>
-                </div>
 
-            </div>
+                </div>
             }
-            
-            <div class="caption-full">
-                <h4 class="pull-right">@Model.Auction.ActualAmount</h4>
-                <h4>
-                    <a href="#">@Model.Auction.Title</a>
-                </h4>
-                <p>@Model.Auction.Description</p>
-            </div>
+
+        <div class="caption-full" style="display: flex; flex-direction: column;">
+            <h4 style="font-size: 30px; color: black">
+                <a href="#">@Model.Auction.Title</a>
+            </h4>
+            <h4 style="font-size: 18px;">
+                $@Model.BidsAmount
+
+                @if (Model.LatesBidder != null)
+                {
+                    <text>
+                        [ @Model.LatesBidder.UserName ]
+                    </text>
+                }
+            </h4>
+
+            <p>@Model.Auction.Description</p>
+        </div>
             <div class="ratings">
                 <p class="pull-right">3 reviews</p>
                 <p>
@@ -68,15 +81,84 @@
                     4.0 stars
                 </p>
             </div>
+            <div class="card-footer text-muted" style="background-color: #f5f5f5;">
+                <button type="button" class="btn btn-primary" id="btnBidNow" style="padding: 12px 18px; margin: 8px;">Bid Now</button>
+            </div>
         </div>
 
         <div class="well">
 
-            <div class="text-right">
-                <a class="btn btn-success">Leave a Review</a>
-            </div>
 
-            <hr>
+
+            <form id="commentForm" style="margin-bottom: 48px;">
+                <input type="hidden" name="EntityID" value="@Model.EntityID" />
+                <input type="hidden" name="RecordID" value="@Model.Auction.ID" />
+
+                <div class="form-group">
+                    @if (Model.Comments != null && Model.Comments.Count > 0)
+                    {
+                        foreach (var comment in Model.Comments)
+                        {
+                            var defaultStars = 5 - comment.Rating;
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <img src="https://image.ibb.co/jw55Ex/def_face.jpg" class="img img-rounded img-fluid" />
+                                            <p class="text-secondary text-center">@comment.TimeStamp</p>
+                                        </div>
+                                        <div class="col-md-10">
+                                            <p>
+                                                <a class="float-left" href="#">
+                                                    <strong>@comment.UserID</strong>
+                                                </a>
+
+                                                <span class="text-danger float-right">
+                                                    @for (int i = 1; i <= comment.Rating; i++)
+                                                    {
+                                                        <i class="fas fa-star"></i>
+                                                    }
+
+                                                    @for (int i = 1; i <= defaultStars; i++)
+                                                    {
+                                                        <i class="far fa-star"></i>
+                                                    }
+                                                </span>
+                                            </p>
+                                            <div class="clearfix"></div>
+                                            <p>
+                                                @comment.Text
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <strong>There are no comments on this Auction.</strong>
+                        <hr style="margin-top: 20px; margin-bottom: 20px; border: 0; border-top: 1px solid #eee" />
+                    }
+                    <div class="mt-2">
+                        <label>Write Your Comment</label>
+                        <span class="text-danger pull-right">
+                            <i class="ratingStar far fa-star" td-value="1"></i>
+                            <i class="ratingStar far fa-star" td-value="2"></i>
+                            <i class="ratingStar far fa-star" td-value="3"></i>
+                            <i class="ratingStar far fa-star" td-value="4"></i>
+                            <i class="ratingStar far fa-star" td-value="5"></i>
+                        </span>
+                    </div>
+
+                    <input type="hidden" name="Rating" id="ratingsValue" value="1" />
+
+                    <textarea class="form-control" id="exampleFormControlTextarea1" name="Text" placeholder="Write Your Comment here" rows="3"></textarea>
+                </div>
+
+                <button type="button" class="btn btn-success" id="btnComment">Leave your Comment</button>
+            </form>
+            @*<hr>
 
             <div class="row">
                 <div class="col-md-12">
@@ -89,43 +171,84 @@
                     <span class="pull-right">10 days ago</span>
                     <p>This product was great in terms of quality. I would definitely buy another!</p>
                 </div>
-            </div>
-
-            <hr>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <span class="glyphicon glyphicon-star"></span>
-                    <span class="glyphicon glyphicon-star"></span>
-                    <span class="glyphicon glyphicon-star"></span>
-                    <span class="glyphicon glyphicon-star"></span>
-                    <span class="glyphicon glyphicon-star-empty"></span>
-                    Anonymous
-                    <span class="pull-right">12 days ago</span>
-                    <p>I've alredy ordered another one!</p>
-                </div>
-            </div>
-
-            <hr>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <span class="glyphicon glyphicon-star"></span>
-                    <span class="glyphicon glyphicon-star"></span>
-                    <span class="glyphicon glyphicon-star"></span>
-                    <span class="glyphicon glyphicon-star"></span>
-                    <span class="glyphicon glyphicon-star-empty"></span>
-                    Anonymous
-                    <span class="pull-right">15 days ago</span>
-                    <p>I've seen some better than this, but not at this price. I definitely recommend this item.</p>
-                </div>
-            </div>
-
+            </div>*@
         </div>
 
     </div>
 
 </div>
+
+<script>
+    $(".ratingStar").hover(function () {
+        $(".ratingStar").addClass("far").removeClass("fas");
+        $(this).addClass("fas").removeClass("far");
+        $(this).prevAll(".ratingStar").addClass("fas").removeClass("far");
+
+    });
+
+    $(".ratingStar").click(function () {
+        var starValue = $(this).attr("data-value")
+
+        $('#ratingValue').val(starValue);
+    });
+
+    $("#btnBidNow").click(function () {
+        $.ajax({
+            url: "@Url.Action("Bid", "Bids")",
+            type: "post",
+            data: {
+                ID: '@Model.Auction.ID'
+            }
+        }).done(function (response) {
+            if (response.Success) {
+                window.location.reload();
+            }
+            else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: response.Message,
+                    @*footer: '<a href="">Error?</a>'*@
+                })
+            }
+        }).fail(function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong?',
+                @*footer: '<a href="">Error?</a>'*@
+            })
+        });
+    })
+
+    $("#btnComment").click(function () {
+        $.ajax({
+            url: "@Url.Action("LeaveComment", "Shared")",
+            type: "post",
+            data: $('#commentForm').serialize()
+        }).done(function (response) {
+            if (response.Success) {
+                window.location.reload();
+            }
+            else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: response.Message,
+                    @*footer: '<a href="">Error?</a>'*@
+                })
+            }
+        }).fail(function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong?',
+                @*footer: '<a href="">Error?</a>'*@
+            })
+        });
+    })
+</script>
+
 
 
 <!-- Product section-->

@@ -14,17 +14,22 @@ namespace Auction.Web.Controllers
         AuctionsService auctionsService = new AuctionsService();
 
         CategoriesService categoriesService = new CategoriesService();
+        SharedService sharedService = new SharedService();
 
-        [HttpGet]
+        /*[HttpGet]*/
         public ActionResult Index(int? categoryID, string searchTerm, int? pageNo)
         {
             AuctionsListingViewModels model = new AuctionsListingViewModels();
+            
 
             model.PageTitle = "Auctions";
             model.PageDescription = "Auctions Listing Page";
-/*
+
             model.CategoryID = categoryID;
-            model.SerchTerm = */
+            model.SearchTerm = searchTerm;
+            model.PageNo = pageNo;
+
+            model.Categories = categoriesService.GetAllCategories();
 
             return View(model);
         }
@@ -32,9 +37,16 @@ namespace Auction.Web.Controllers
         
         public ActionResult Listing(int? categoryID, string searchTerm, int? pageNo)
         {
+            var pageSize = 1;
+
             AuctionsListingViewModels model = new AuctionsListingViewModels();
 
-            model.Auctions = auctionsService.GetAllAuctions();
+            /*model.Auctions = auctionsService.GetAllAuctions();*/
+            model.Auctions = auctionsService.SearchAuctions(categoryID, searchTerm, pageNo, pageSize);
+
+            var totalAuctions = auctionsService.GetAuctionCount(categoryID, searchTerm);
+
+            model.Pager = new Pager(totalAuctions, pageNo, pageSize);
 
             return PartialView(model);
 
@@ -51,38 +63,49 @@ namespace Auction.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(CreateAuctionViewModels model)
+        public JsonResult Create(CreateAuctionViewModels model)
         {
-            Auction.Entities.Auction auction = new Auction.Entities.Auction();
-            auction.Title = model.Title;
-            auction.CategoryID = model.CategoryID;
-            auction.Description = model.Description;
-            auction.ActualAmount = model.ActualAmount;
-            auction.StartingTime = model.StartingTime;
-            auction.EndingTime = model.EndingTime;
-
-            //check if we have AuctionPictureIDs posted back from form
-            if (!string.IsNullOrEmpty(model.AuctionPictures))
+            JsonResult result = new JsonResult();
+            if (ModelState.IsValid)
             {
-                //LINQ
-                var pictureIDs = model.AuctionPictures.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(ID => int.Parse(ID)).ToList();
+                Auction.Entities.Auction auction = new Auction.Entities.Auction();
+                auction.Title = model.Title;
+                auction.CategoryID = model.CategoryID;
+                auction.Description = model.Description;
+                auction.ActualAmount = model.ActualAmount;
+                auction.StartingTime = model.StartingTime;
+                auction.EndingTime = model.EndingTime;
 
-                auction.AuctionPictures = new List<AuctionPicture>();
+                //check if we have AuctionPictureIDs posted back from form
+                if (!string.IsNullOrEmpty(model.AuctionPictures))
+                {
+                    //LINQ
+                    var pictureIDs = model.AuctionPictures.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(ID => int.Parse(ID)).ToList();
 
-                auction.AuctionPictures.AddRange(pictureIDs.Select(x => new AuctionPicture() { PictureID = x }).ToList());
+                    auction.AuctionPictures = new List<AuctionPicture>();
+
+                    auction.AuctionPictures.AddRange(pictureIDs.Select(x => new AuctionPicture() { PictureID = x }).ToList());
+                }
+                //foreach (var picID in pictureIDs)
+                //{
+                //    var auctionPicture = new AuctionPicture();
+                //    auctionPicture.PictureID = picID;
+
+                //    auction.AuctionPicture.Add(auctionPicture);
+                //}
+
+                auctionsService.SaveAuction(auction);
+
+                result.Data = new { Suscess = true};
             }
-            //foreach (var picID in pictureIDs)
-            //{
-            //    var auctionPicture = new AuctionPicture();
-            //    auctionPicture.PictureID = picID;
+            else
+            {
 
-            //    auction.AuctionPicture.Add(auctionPicture);
-            //}
+                result.Data = new { Suscess = true, Error = "Unalble to save Auction. Please enter valid values."};
+            }
 
-            auctionsService.SaveAuction(auction);
-
-            return RedirectToAction("Listing");
+            return result;
         }
 
         [HttpGet]
@@ -146,7 +169,16 @@ namespace Auction.Web.Controllers
         public ActionResult Details(int ID)
         {
             AuctionsDetailsViewModels model = new AuctionsDetailsViewModels();
+            model.EntityID = (int)EntityEnums.Auction;
             model.Auction = auctionsService.GetAuctionByID(ID);
+
+            model.BidsAmount = model.Auction.ActualAmount + model.Auction.Bids.Sum(x => x.BidAmount);
+
+            var latestBidder = model.Auction.Bids.OrderByDescending(x => x.Timestamp).FirstOrDefault();
+
+            model.LatesBidder = latestBidder != null ? latestBidder.User : null;
+
+            model.Comments = sharedService.GetComments((int)EntityEnums.Auction, model.Auction.ID);
 
             model.PageTitle = "Auctions Details: " + model.Auction.Title;
             /*model.PageDescription = model.Auction.Description.Substring(0, 10);*/

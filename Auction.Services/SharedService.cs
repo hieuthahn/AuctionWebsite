@@ -20,5 +20,21 @@ namespace Auction.Services
 
             return picture.ID;
         }
+
+        public bool LeaveComment(Auction.Entities.Comment comment)
+        {
+            AuctionContext context = new AuctionContext();
+
+            context.Comments.Add(comment);
+
+            return context.SaveChanges() > 0;
+        }
+
+        public List<Comment> GetComments(int entityID, int recordID)
+        {
+            AuctionContext context = new AuctionContext();
+
+            return context.Comments.Where(x => x.EntityID == entityID && x.RecordID == recordID).ToList();
+        }
     }
 }

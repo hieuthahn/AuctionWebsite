@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Auction.Web.ViewsModels;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Auction.Web.Models
@@ -46,7 +47,7 @@ namespace Auction.Web.Models
         public string Email { get; set; }
     }
 
-    public class LoginViewModel
+    public class LoginViewModel : PageViewModels
     {
         [Required]
         [Display(Name = "Email")]

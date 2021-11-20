@@ -36,7 +36,7 @@ namespace Auction.Services
             //pageNo = pageNo.HasValue ? pageNo.Value : 1;
             var skipCount = (pageNo.Value - 1) * pageSize;
 
-            return auctions.Skip(skipCount).Take(pageSize).ToList();
+            return auctions.OrderByDescending(x=>x.CategoryID).Skip(skipCount).Take(pageSize).ToList();
         }
 
         public List<Auction.Entities.Auction> GetPromotedAuctions()
@@ -44,6 +44,25 @@ namespace Auction.Services
             AuctionContext context = new AuctionContext();
 
             return context.Auctions.Take(4).ToList();
+        }
+
+        public int GetAuctionCount(int? categoryID, string searchTerm)
+        {
+            AuctionContext context = new AuctionContext();
+
+            var auctions = context.Auctions.AsQueryable();
+
+            if (categoryID.HasValue && categoryID.Value > 0)
+            {
+                auctions = auctions.Where(x => x.CategoryID == categoryID.Value);
+            }
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                auctions = auctions.Where(x => x.Title.ToLower().Contains(searchTerm.ToLower()));
+            }
+
+            return auctions.Count();
         }
 
         public Auction.Entities.Auction GetAuctionByID(int ID)
@@ -65,7 +84,12 @@ namespace Auction.Services
         {
             AuctionContext context = new AuctionContext();
 
-            context.Entry(auction).State = System.Data.Entity.EntityState.Modified;
+            var existingAuction = context.Auctions.Find(auction.ID);
+
+            context.AuctionPictures.RemoveRange(existingAuction.AuctionPictures);
+            context.Entry(existingAuction).CurrentValues.SetValues(auction);
+
+            context.AuctionPictures.AddRange(auction.AuctionPictures);
 
             context.SaveChanges();
         }

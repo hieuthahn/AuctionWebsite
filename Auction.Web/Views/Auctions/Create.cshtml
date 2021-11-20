@@ -8,7 +8,8 @@
     <div class="modal-body">
         <div class="form-group">
             <label for="exampleInputEmail1">Title</label>
-            <input type="text" name="Title" class="form-control" placeholder="Title">
+            <input type="text" name="Title" class="form-control" placeholder="Title" value="@Model.Title" @*required minlength="12" maxlength="100" aria-invalid="true"*@>@*
+            <label id="Title-error" class="error" for="Title" >Please enter at least 12 characters</label>*@
         </div>
 
         <div class="form-group">
@@ -23,22 +24,22 @@
 
         <div class="form-group">
             <label for="exampleInputEmail1">Description</label>
-            <input type="text" class="form-control" name="Description" placeholder="Description">
+            <input type="text" class="form-control" name="Description" placeholder="Description" value="@Model.Description">
         </div>
 
         <div class="form-group">
             <label for="exampleInputEmail1">ActualAmount</label>
-            <input type="text" name="ActualAmount" class="form-control" placeholder="ActualAmount">
+            <input type="text" name="ActualAmount" class="form-control" placeholder="ActualAmount" value="@Model.ActualAmount">
         </div>
 
         <div class="form-group">
             <label for="exampleInputEmail1">Starting Time</label>
-            <input type="datetime-local" name="StartingTime" class="form-control" placeholder="Starting Time">
+            <input type="datetime-local" name="StartingTime" class="form-control" placeholder="Starting Time" value="@Model.StartingTime">
         </div>
 
         <div class="form-group">
             <label for="exampleInputEmail1">Ending Time</label>
-            <input type="datetime-local" name="EndingTime" class="form-control" placeholder="Ending Time">
+            <input type="datetime-local" name="EndingTime" class="form-control" placeholder="Ending Time" value="@Model.EndingTime">
         </div>
 
         <div class="form-group">
@@ -47,6 +48,9 @@
             <div id="picturesArea"></div>
             <input type="hidden" name="AuctionPictures" id="pictureIDs" />
         </div>
+        <div id="formError" class="form-group bg-danger" style="display: none">
+
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -54,28 +58,57 @@
     </div>
 </form>
 
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
 
 <script>
+
+    $("#createForm").validate({
+        rules: {
+            Title: {
+                required: true,
+                minlength: 15,
+                maxlength: 150
+            }
+        },
+        message: {
+            Title: {
+                required: "Title is required",
+                minlength: "Minimum Length is 15",
+                maxlength: "Maximum Length is 150"
+            }
+        }
+    });
+
     $("#saveButton").click(function () {
 
-        var imageIDs = [];
+        if ($("createForm").valid()) {
+            var imageIDs = [];
 
-        $("#picturesArea .image").each(function () {
-            var imageID = $(this).attr("data-id");
+            $("#picturesArea .image").each(function () {
+                var imageID = $(this).attr("data-id");
 
-            imageIDs.push(imageID);
-        });
+                imageIDs.push(imageID);
+            });
 
-        $("#pictureIDs").val(imageIDs.join());
+            $("#pictureIDs").val(imageIDs.join());
 
-        $.ajax({
-            url: "@Url.Action("Create", "Auctions")",
-            type: "post",
-            data: $("#createForm").serialize()
-        }).done(function (response) {
-            $("#listingArea").html(response);
-            $('#formModal').modal('toggle');
-        });
+            $.ajax({
+                url: "@Url.Action("Create", "Auctions")",
+                type: "post",
+                data: $("#createForm").serialize()
+            }).done(function (response) {
+
+                if (response.Success) {
+                    ReloadListing();
+                    $('#formModal').modal('toggle');
+                }
+                else {
+                    $("#formError").html(response.Error);
+                    $("#formError").show();
+                }
+            });
+        }
+
     });
 
     $("#auctionPictures").change(function () {
