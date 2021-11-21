@@ -1,18 +1,18 @@
 ﻿@model Auction.Web.ViewsModels.CreateAuctionViewModels
 
 <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h4 class="modal-title" id="myModalLabel">Edit Auction</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <form id="editForm" method="post">
     <div class="modal-body">
         <input type="hidden" name="ID" value="@Model.ID" />
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label for="exampleInputEmail1">Title</label>
             <input type="text" name="Title" value="@Model.Title" class="form-control" id="exampleInputEmail1" placeholder="Title">
         </div>
 
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label for="exampleInputEmail1">Category</label>
             <select class="form-control" name="CategoryID">
                 @foreach (var category in Model.Categories)
@@ -24,27 +24,27 @@
             </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label for="exampleInputEmail1">Description</label>
             <input type="text" class="form-control" value="@Model.Description" name="Description" id="exampleInputEmail1" placeholder="Description">
         </div>
 
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label for="exampleInputEmail1">ActualAmount</label>
             <input type="text" name="ActualAmount" value="@Model.ActualAmount" class="form-control" id="exampleInputEmail1" placeholder="ActualAmount">
         </div>
 
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label for="exampleInputEmail1">Starting Time</label>
             <input type="text" name="StartingTime" value="@Model.StartingTime" class="form-control" id="exampleInputEmail1" placeholder="Starting Time">
         </div>
 
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label for="exampleInputEmail1">Ending Time</label>
             <input type="text" name="EndingTime" value="@Model.EndingTime" class="form-control" id="exampleInputEmail1" placeholder="Ending Time">
         </div>
 
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label for="exampleInputFile">Upload Image</label>
             <input type="file" name="AuctionPictures" id="auctionPictures" multiple>
             <div id="picturesArea">
@@ -60,7 +60,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
         <button type="button" class="btn btn-success" id="saveButton">Save</button>
     </div>
 </form>
@@ -81,7 +81,7 @@
 
         $.ajax({
             url: "@Url.Action("Edit", "Auctions")",
-            method: "post",
+            type: "post",
             data: $("#editForm").serialize()
         }).done(function (response) {
             $("#listingArea").html(response);

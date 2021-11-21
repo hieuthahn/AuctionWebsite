@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -15,6 +15,7 @@ namespace Auction.Data
     {
         public AuctionContext() : base("name=AuctionConnectionString")
         {
+            Database.SetInitializer<AuctionContext>(new AucionDBInitializer());
         }
 
         public DbSet<Auction.Entities.Category> Categories { get; set; }

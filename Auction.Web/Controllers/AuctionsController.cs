@@ -12,7 +12,6 @@ namespace Auction.Web.Controllers
     public class AuctionsController : Controller
     {
         AuctionsService auctionsService = new AuctionsService();
-
         CategoriesService categoriesService = new CategoriesService();
         SharedService sharedService = new SharedService();
 
@@ -20,7 +19,7 @@ namespace Auction.Web.Controllers
         public ActionResult Index(int? categoryID, string searchTerm, int? pageNo)
         {
             AuctionsListingViewModels model = new AuctionsListingViewModels();
-            
+
 
             model.PageTitle = "Auctions";
             model.PageDescription = "Auctions Listing Page";
@@ -34,14 +33,13 @@ namespace Auction.Web.Controllers
             return View(model);
         }
 
-        
+
         public ActionResult Listing(int? categoryID, string searchTerm, int? pageNo)
         {
-            var pageSize = 1;
+            var pageSize = 2;
 
             AuctionsListingViewModels model = new AuctionsListingViewModels();
-
-            /*model.Auctions = auctionsService.GetAllAuctions();*/
+            //model.Auctions = auctionsService.GetAllAuctions();
             model.Auctions = auctionsService.SearchAuctions(categoryID, searchTerm, pageNo, pageSize);
 
             var totalAuctions = auctionsService.GetAuctionCount(categoryID, searchTerm);
@@ -97,12 +95,12 @@ namespace Auction.Web.Controllers
 
                 auctionsService.SaveAuction(auction);
 
-                result.Data = new { Suscess = true};
+                result.Data = new { Suscess = true };
             }
             else
             {
 
-                result.Data = new { Suscess = true, Error = "Unalble to save Auction. Please enter valid values."};
+                result.Data = new { Suscess = true, Error = "Unalble to save Auction. Please enter valid values." };
             }
 
             return result;
@@ -149,7 +147,7 @@ namespace Auction.Web.Controllers
 
                 auction.AuctionPictures = new List<AuctionPicture>();
 
-                auction.AuctionPictures.AddRange(pictureIDs.Select(x => new AuctionPicture() {AuctionID = auction.ID, PictureID = x }).ToList());
+                auction.AuctionPictures.AddRange(pictureIDs.Select(x => new AuctionPicture() { AuctionID = auction.ID, PictureID = x }).ToList());
             }
 
             auctionsService.UpdateAuction(auction);
@@ -168,6 +166,7 @@ namespace Auction.Web.Controllers
         [HttpGet]
         public ActionResult Details(int ID)
         {
+            Auction.Entities.Auction auction = new Auction.Entities.Auction();
             AuctionsDetailsViewModels model = new AuctionsDetailsViewModels();
             model.EntityID = (int)EntityEnums.Auction;
             model.Auction = auctionsService.GetAuctionByID(ID);
@@ -183,6 +182,8 @@ namespace Auction.Web.Controllers
             model.PageTitle = "Auctions Details: " + model.Auction.Title;
             /*model.PageDescription = model.Auction.Description.Substring(0, 10);*/
 
+            /*auction.ActualAmount = model.BidsAmount;
+            auctionsService.UpdateBidAuction(auction);*/
             return View(model);
         }
     }

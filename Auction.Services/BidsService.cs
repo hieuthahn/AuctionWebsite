@@ -10,15 +10,14 @@ namespace Auction.Services
 {
     public class BidsService
     {
+        AuctionContext context = new AuctionContext();
 
         public bool AddBid(Bid bid)
         {
-            AuctionContext context = new AuctionContext();
 
             context.Bids.Add(bid);
             return context.SaveChanges() > 0;
         }
-
     }
 
 }

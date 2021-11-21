@@ -10,19 +10,50 @@ namespace Auction.Web.Controllers
 {
     public class HomeController : Controller
     {
-        AuctionsService service = new AuctionsService();
-        public ActionResult Index()
+        AuctionsService auctionsService = new AuctionsService();
+        CategoriesService categoriesService = new CategoriesService();
+
+        public ActionResult Index(int? categoryID, string searchTerm, int? pageNo)
         {
-            AuctionsViewModels vModel = new AuctionsViewModels();
+            /*AuctionsViewModels vModel = new AuctionsViewModels();
 
             vModel.PageTitle = "Đấu giá trực tuyến";
             vModel.PageDescription = "This is HomePage";
 
-            vModel.AllAuctions = service.GetAllAuctions();
-            vModel.PromotedAuctions = service.GetPromotedAuctions();
+            var auctions = auctionsService.GetAllAuctions();
+
+            vModel.AllAuctions = new List<Entities.Auction>();
+            vModel.AllAuctions.AddRange(auctions);
+
+            vModel.PromotedAuctions = auctionsService.GetPromotedAuctions();
            
 
-            return View(vModel);
+            return View(vModel);*/
+            AuctionsListingViewModels model = new AuctionsListingViewModels();
+
+            model.CategoryID = categoryID;
+            model.SearchTerm = searchTerm;
+            model.PageNo = pageNo;
+
+            model.Categories = categoriesService.GetAllCategories();
+            return View(model);
+
+        }
+
+        public ActionResult Listing(int? categoryID, string searchTerm, int? pageNo)
+        {
+            var pageSize = 10;
+
+            AuctionsListingViewModels model = new AuctionsListingViewModels();
+            //model.Auctions = auctionsService.GetAllAuctions();
+            model.Auctions = auctionsService.SearchAuctions(categoryID, searchTerm, pageNo, pageSize);
+
+            var totalAuctions = auctionsService.GetAuctionCount(categoryID, searchTerm);
+
+            model.Pager = new Pager(totalAuctions, pageNo, pageSize);
+
+            return PartialView(model);
+
         }
 
         public ActionResult About()

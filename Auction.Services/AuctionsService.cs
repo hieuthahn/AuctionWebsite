@@ -102,6 +102,15 @@ namespace Auction.Services
 
             context.SaveChanges();
         }
+
+        /*public void UpdateBidAuction(Auction.Entities.Auction auction)
+        {
+            AuctionContext context = new AuctionContext();
+
+            context.Entry(auction).State = System.Data.Entity.EntityState.Modified;
+
+            context.SaveChanges();
+        }*/
     }
 
 }

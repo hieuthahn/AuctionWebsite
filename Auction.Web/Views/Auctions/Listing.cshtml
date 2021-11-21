@@ -1,5 +1,4 @@
-﻿
-@model Auction.Web.ViewsModels.AuctionsListingViewModels
+﻿@model Auction.Web.ViewsModels.AuctionsListingViewModels
 
 <table class="table table-hover">
     <thead>
@@ -28,34 +27,35 @@
         </tr>
     </thead>
     <tbody>
-        @if (Model.Auctions != null && Model.Auctions.Count > 0) {
+        @if (Model.Auctions != null && Model.Auctions.Count > 0)
+        {
             foreach (var auction in Model.Auctions)
             {
                 <tr>
-                <td>
-                    <input type="hidden" name="ID" value="@auction.ID" />
-                    @auction.Title
-                </td>
-                <td>
-                    @auction.Category.Name
-                </td>
-                <td>
-                    @auction.Description
-                </td>
-                <td>
-                    @auction.ActualAmount
-                </td>
-                <td>
-                    @auction.StartingTime
-                </td>
-                <td>
-                    @auction.EndingTime
-                </td>
-                <td>
-                    <button class="editButton btn btn-primary" data-id="@auction.ID" data-toggle="modal" data-target="#formModal">Edit</button>
-                    <button class="deleteButton btn btn-danger" data-id="@auction.ID" data-toggle="modal" data-target="#deleteModal">Delete</button>
-                </td>
-            </tr>
+                    <td>
+                        <input type="hidden" name="ID" value="@auction.ID" />
+                        @auction.Title
+                    </td>
+                    <td>
+                        @auction.Category.Name
+                    </td>
+                    <td>
+                        @auction.Description
+                    </td>
+                    <td>
+                        @auction.ActualAmount
+                    </td>
+                    <td>
+                        @auction.StartingTime
+                    </td>
+                    <td>
+                        @auction.EndingTime
+                    </td>
+                    <td>
+                        <button class="editButton btn btn-primary" data-id="@auction.ID" data-toggle="modal" data-target="#formModal">Edit</button>
+                        <button class="deleteButton btn btn-danger" data-id="@auction.ID" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                    </td>
+                </tr>
             }
         }
         else
@@ -70,23 +70,21 @@
     </tbody>
 </table>
 
-@if(Model.Pager != null && Model.Pager.TotalPages > 0)
+@if (Model.Pager != null && Model.Pager.TotalPages > 0)
 {
     <nav aria-label="" style="display: flex; justify-content: center;">
         <ul class="pagination">
             @if (Model.Pager.CurrentPage == 1)
             {
-                <li class="disabled">
-                    <a href="#" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
+                <li class="page-item disabled">
+                    <a class="page-link">Previous</a>
                 </li>
             }
             else
             {
-                <li class="">
-                    <a href="@Url.Action("Index", "Auctions", new { pageNo = Model.Pager.CurrentPage - 1, categoryID = Model.CategoryID , searchTerm = Model.SearchTerm })" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", "Auctions", new { pageNo = Model.Pager.CurrentPage - 1, categoryID = Model.CategoryID , searchTerm = Model.SearchTerm })" aria-label="Previous">
+                        Previous
                     </a>
                 </li>
             }
@@ -96,8 +94,8 @@
 
                 var active = page == Model.Pager.CurrentPage ? "active" : string.Empty;
 
-                <li class="@active">
-                    <a href="@Url.Action("Index", "Auctions", new { pageNo = page })">
+                <li class="page-item @active">
+                    <a class="page-link" href="@Url.Action("Index", "Auctions", new { pageNo = page })">
                         @page
                     </a>
                 </li>
@@ -105,17 +103,15 @@
 
             @if (Model.Pager.CurrentPage == Model.Pager.EndPage)
             {
-                <li class="disabled">
-                    <a href="#" aria-label="Next">
-                        <span aria-hidden="true">»</span>
-                    </a>
+                <li class="page-item disabled">
+                    <a class="page-link">Previous</a>
                 </li>
             }
             else
             {
-                <li class="">
-                    <a href="@Url.Action("Index", "Auctions", new { pageNo = Model.Pager.CurrentPage + 1 })" aria-label="Next">
-                        <span aria-hidden="true">»</span>
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", "Auctions", new { pageNo = Model.Pager.CurrentPage + 1, categoryID = Model.CategoryID , searchTerm = Model.SearchTerm })" aria-label="Next">
+                        Next
                     </a>
                 </li>
             }
@@ -125,9 +121,8 @@
 }
 
 
-
-
-<script>
+@section Scripts {
+    <script>
     $(".editButton").click(function () {
         $.ajax({
             url: "@Url.Action("Edit", "Auctions")",
@@ -137,7 +132,7 @@
             }
         }).done(function (response) {
             $("#contentArea").html(response);
-            /*$('#formModal').modal('toggle');*/
+            $('#formModal').modal('toggle');
         });
     });
 
@@ -146,7 +141,10 @@
         $('#mDeleteButton').attr("data-recordID", $(this).attr("data-id"));
     });
 
-</script>
+    </script>
+}
+
+
 
 
 

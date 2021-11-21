@@ -79,6 +79,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AucionDBInitializer.cs" />
     <Compile Include="AuctionContext.cs" />
     <Compile Include="Migrations\202111190424313_addedCategories.cs" />
     <Compile Include="Migrations\202111190424313_addedCategories.designer.cs">
@@ -107,6 +108,10 @@
     <Compile Include="Migrations\202111201157441_ratingsComments.cs" />
     <Compile Include="Migrations\202111201157441_ratingsComments.designer.cs">
       <DependentUpon>202111201157441_ratingsComments.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202111210339185_addRequiredTitle.cs" />
+    <Compile Include="Migrations\202111210339185_addRequiredTitle.designer.cs">
+      <DependentUpon>202111210339185_addRequiredTitle.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -142,6 +147,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202111201157441_ratingsComments.resx">
       <DependentUpon>202111201157441_ratingsComments.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202111210339185_addRequiredTitle.resx">
+      <DependentUpon>202111210339185_addRequiredTitle.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

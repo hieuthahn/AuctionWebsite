@@ -98,5 +98,6 @@ namespace Auction.Web.Controllers
 
             return View(model);
         }
+
     }
 }
